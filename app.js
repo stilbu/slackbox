@@ -84,5 +84,9 @@ app.post('/store', function(req, res) {
     });
 });
 
+app.post('/clear', function (req, res) {
+    spotifyApi.removeTracksFromPlaylist(process.env.SPOTIFY_USERNAME, process.env.SPOTIFY_PLAYLIST_ID, ['*']);
+});
+
 app.set('port', (process.env.PORT || 5000));
 app.listen(app.get('port'));
