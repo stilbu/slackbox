@@ -85,7 +85,21 @@ app.post('/store', function(req, res) {
 });
 
 app.post('/clear', function (req, res) {
-    spotifyApi.removeTracksFromPlaylist(process.env.SPOTIFY_USERNAME, process.env.SPOTIFY_PLAYLIST_ID, ['*']);
+  spotifyApi.getPlaylistTracks(process.env.SPOTIFY_USERNAME, process.env.SPOTIFY_PLAYLIST_ID)
+    .then(function (data) {
+      var results = data.body.items;
+    
+      results.forEach(function (item) {
+        spotifyApi.removeTracksFromPlaylist(
+          process.env.SPOTIFY_USERNAME, 
+          process.env.SPOTIFY_PLAYLIST_ID, 
+          [{ 'uri': 'spotify:track:' + item.track.id }]
+        );
+    });
+    return res.send('Playlist cleared');
+  }, function (err) {
+    return res.send(err.message);
+  });
 });
 
 app.set('port', (process.env.PORT || 5000));
